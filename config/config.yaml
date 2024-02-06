@@ -1,0 +1,7 @@
+db:
+  host: localhost
+  port: 5555
+  user: root
+  password: passw0rd
+  database: ludwig_the_holy_blade
+  

@@ -6,6 +6,7 @@ import (
 	"github.com/kaolnwza/proj-blueprint/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type GormDB struct {
@@ -26,7 +27,9 @@ func GormConnect(conf config.DatabaseConfig) (*gorm.DB, error) {
 	return gorm.Open(postgres.New(postgres.Config{
 		DSN:                  dsn,
 		PreferSimpleProtocol: true, // disables implicit prepared statement usage
-	}), &gorm.Config{})
+	}), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 }
 
 func newGormDSN(host, user, password, db, port string) string {

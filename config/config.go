@@ -13,19 +13,11 @@ const (
 type Config struct {
 	Env              string             `mapstructure:"env"`
 	DatabaseConf     DatabaseConfig     `mapstructure:"db"`
+	RedisConf        RedisConfig        `mapstructure:"redis"`
 	LogConf          LogConfig          `mapstructure:"log"`
 	HttpConf         HttpConfig         `mapstructure:"http"`
 	MicroserviceConf MicroserviceConfig `mapstructure:"microservice"`
 	ExternalApiConf  ExternalApiConfig  `mapstructure:"external_api"`
-}
-
-type DatabaseConfig struct {
-	Driver   string `mapstructure:"driver"`
-	Host     string `mapstructure:"host"`
-	Port     string `mapstructure:"port"`
-	Username string `mapstructure:"username"`
-	Password string `mapstructure:"password"`
-	Database string `mapstructure:"database"`
 }
 
 type HttpConfig struct {
@@ -60,7 +52,7 @@ func New() Config {
 		panic(fmt.Errorf("[Config] unmarshal failed: %w", err))
 	}
 
-	parseSecret(&conf)
+	conf.parseSecret()
 	if err := conf.setupHttpPoolClient(); err != nil {
 		panic(fmt.Errorf("[Config]failed to setHttpPoolClients, err = %w", err))
 	}

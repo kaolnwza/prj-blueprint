@@ -8,7 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/kaolnwza/proj-blueprint/config"
-	"github.com/kaolnwza/proj-blueprint/libs/constants"
+	"github.com/kaolnwza/proj-blueprint/libs/consts"
 	"github.com/kaolnwza/proj-blueprint/libs/utils"
 	"github.com/kaolnwza/proj-blueprint/pkg/logger"
 )
@@ -55,6 +55,6 @@ func RequestLogger(logConf config.LogConfig) func(c *gin.Context) {
 
 // setup requestId on context for logging
 func setCtx(c *gin.Context, requestId string) {
-	ctx := utils.SetContext[string](c.Request.Context(), constants.CtxRequestId, requestId)
+	ctx := utils.SetContext[string](c.Request.Context(), consts.CtxRequestId, requestId)
 	c.Request = c.Request.WithContext(ctx)
 }

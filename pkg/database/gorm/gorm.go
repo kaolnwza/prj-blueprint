@@ -7,54 +7,69 @@ import (
 	"github.com/kaolnwza/proj-blueprint/config"
 	"github.com/kaolnwza/proj-blueprint/pkg/database"
 
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
 type txKey struct{}
 
-type GormDB struct {
+type gormDB struct {
 	db *gorm.DB
 }
 
-func (g GormDB) New(ctx context.Context) *gorm.DB {
+func (g gormDB) New(ctx context.Context) *gorm.DB {
 	if tx, ok := ctx.Value(txKey{}).(*gorm.DB); ok {
-		return GormDB{db: tx}.db.WithContext(ctx)
+		return gormDB{db: tx}.db.WithContext(ctx)
 	}
 
 	return g.db.WithContext(ctx)
 }
 
-func New(conf config.DatabaseConfig) (database.RdbmsDB[*gorm.DB], error) {
-	db, err := GormConnect(conf)
+func (g gormDB) Query(ctx context.Context, query string, dest any, args ...interface{}) error {
+	return g.db.Raw(query, args...).Scan(&dest).Error
+}
+
+func (g gormDB) Exec(ctx context.Context, query string, args ...interface{}) error {
+	return g.db.Raw(query, args...).Error
+}
+
+func (g gormDB) ExecReturning(ctx context.Context, query string, dest any, args ...interface{}) error {
+	return g.db.Raw(query, args...).Scan(&dest).Error
+}
+
+// default
+func New(conf config.BaseDatabaseConfig) database.RdbmsDB[*gorm.DB] {
+	db, err := gormConnect(conf)
 	if err != nil {
-		return nil, err
+		panic(fmt.Errorf("gorm failed to connect database: %v, err = %w", conf.Host, err))
 	}
 
-	return GormDB{db: db}, nil
+	return gormDB{db: db}
 }
 
 const (
-	DriverPostgres = "postgres"
+	driverPostgres = "postgres"
+	driverMysql    = "mysql"
 )
 
-func GormConnect(conf config.DatabaseConfig) (*gorm.DB, error) {
+func gormConnect(conf config.BaseDatabaseConfig) (*gorm.DB, error) {
+	gormConf := gorm.Config{
+		// Logger: logger.Default.LogMode(logger.Info),
+		Logger: logger.Default.LogMode(logger.Silent),
+	}
+
 	switch conf.Driver {
-	case DriverPostgres:
-		dsn := newGormDSN(conf.Host, conf.Username, conf.Password, conf.Database, conf.Port)
-		return gorm.Open(postgres.New(postgres.Config{
-			DSN:                  dsn,
-			PreferSimpleProtocol: true, // disables implicit prepared statement usage
-		}), &gorm.Config{
-			// Logger: logger.Default.LogMode(logger.Info),
-			Logger: logger.Default.LogMode(logger.Silent),
-		})
+	case driverMysql:
+		return gorm.Open(mysql.New(mysql.Config{
+			DSN:                       conf.NewMysqlDsn(), // data source name
+			DefaultStringSize:         256,                // default size for string fields
+			DisableDatetimePrecision:  true,               // disable datetime precision, which not supported before MySQL 5.6
+			DontSupportRenameIndex:    true,               // drop & create when rename index, rename index not supported before MySQL 5.7, MariaDB
+			DontSupportRenameColumn:   true,               // `change` when rename column, rename column not supported before MySQL 8, MariaDB
+			SkipInitializeWithVersion: false,              // auto configure based on currently MySQL version
+		}), &gormConf)
 	}
 
 	return nil, fmt.Errorf("unknow driver")
-}
-
-func newGormDSN(host, user, password, db, port string) string {
-	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Bangkok", host, user, password, db, port)
 }

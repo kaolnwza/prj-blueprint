@@ -8,5 +8,5 @@ import (
 )
 
 type Repository interface {
-	InqUserKub(ctx context.Context, req models.ReqInqUser) (api.BaseResponse[models.RespInqUser], error)
+	ExamMicrosvcInqUserKub(ctx context.Context, req models.ReqInqUser) (api.BaseResponse[models.RespInqUser], error)
 }

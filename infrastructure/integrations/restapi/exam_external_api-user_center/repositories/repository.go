@@ -7,10 +7,10 @@ import (
 	"github.com/kaolnwza/proj-blueprint/config"
 
 	"github.com/kaolnwza/proj-blueprint/infrastructure/integrations/restapi/exam_external_api-user_center/models"
-	"github.com/kaolnwza/proj-blueprint/infrastructure/integrations/restapi/user_center/ports"
+	"github.com/kaolnwza/proj-blueprint/infrastructure/integrations/restapi/exam_external_api-user_center/ports"
 
 	"github.com/kaolnwza/proj-blueprint/libs/api"
-	"github.com/kaolnwza/proj-blueprint/libs/constants"
+	"github.com/kaolnwza/proj-blueprint/libs/consts"
 	"github.com/kaolnwza/proj-blueprint/libs/utils"
 )
 
@@ -46,7 +46,7 @@ func (r repo) ExamExternalApiInqUserKub(ctx context.Context, req models.ReqInqUs
 	}
 
 	header := utils.NewHeader(ctx)
-	header.Set(constants.ContentType, constants.ApplicationJson)
+	header.Set(consts.ContentType, consts.ApplicationJson)
 
 	reqBody := http.Request{
 		Method: epConf.Method,

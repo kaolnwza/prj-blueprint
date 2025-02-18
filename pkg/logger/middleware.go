@@ -8,20 +8,20 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
-	"github.com/kaolnwza/proj-blueprint/libs/constants"
+	"github.com/kaolnwza/proj-blueprint/libs/consts"
 	"github.com/sirupsen/logrus"
 )
 
 // NewRequestLogger will include requestID in logs. Recommended to use during request handling.
 func NewRequestLogger(request *http.Request) Entry {
-	requestID := request.Header.Get(constants.RequestIdKey)
+	requestID := request.Header.Get(consts.RequestIdKey)
 	if requestID == "" {
 		requestID = uuid.New().String()
-		request.Header.Add(constants.RequestIdKey, requestID)
+		request.Header.Add(consts.RequestIdKey, requestID)
 	}
 
 	return &entry{
-		Entry:   logrus.NewEntry(logger).WithField(constants.RequestIdKey, requestID),
+		Entry:   logrus.NewEntry(logger).WithField(consts.RequestIdKey, requestID),
 		id:      requestID,
 		request: request,
 	}

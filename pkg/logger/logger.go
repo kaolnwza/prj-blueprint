@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/kaolnwza/proj-blueprint/config"
-	"github.com/kaolnwza/proj-blueprint/libs/constants"
+	"github.com/kaolnwza/proj-blueprint/libs/consts"
 	"github.com/kaolnwza/proj-blueprint/libs/utils"
 	"github.com/sirupsen/logrus"
 )
@@ -98,7 +98,7 @@ func newLogger(prefix, format string) *logrus.Logger {
 
 func getLogEntry(id, prefix, format string) *logrus.Entry {
 	logger := newLogger(prefix, format)
-	return logrus.NewEntry(logger).WithField(constants.RequestIdKey, id)
+	return logrus.NewEntry(logger).WithField(consts.RequestIdKey, id)
 }
 
 func GetById(id string) *logrus.Entry {
@@ -107,7 +107,7 @@ func GetById(id string) *logrus.Entry {
 
 // this fn will include requestId on logging.
 func GetByContext(ctx context.Context) *logrus.Entry {
-	requestID, err := utils.GetContext[string](ctx, constants.CtxRequestId)
+	requestID, err := utils.GetContext[string](ctx, consts.CtxRequestId)
 	if err != nil {
 		GetById("").Errorf("Failed to get request ID from context, err = %v", err)
 	}

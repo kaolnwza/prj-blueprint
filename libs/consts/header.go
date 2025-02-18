@@ -1,4 +1,4 @@
-package constants
+package consts
 
 const (
 	RequestIdKey = "X-Request-ID"

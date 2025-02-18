@@ -1,13 +1,20 @@
 env: "local"
 
 db:
-  name: primary
-  driver: postgres
-  host: localhost
-  port: 5555
-  user: root
-  password: passw0rd
-  database: ludwig_the_holy_blade
+  my_db_kub:
+    driver: postgres
+    host: localhost
+    port: 5555
+    user: root
+    password: passw0rd
+    database: ludwig_the_holy_blade
+  eiei_db:
+    driver: mysql
+    host: localhost
+    port: 6666
+    user: root
+    password: passw0rd
+    database: eiei
 
 log:
   level: "info"
@@ -49,3 +56,48 @@ external_api:
       add:
         http_method: "POST"
         endpoint: ""
+
+redis:
+  my_rdb:
+    host: "localhost"
+    password: "passw0rd"
+    port: 6379
+    db: 0
+    connection:
+      default: true # default conn pool setting by redis lib
+      max_retries: 3
+      min_retry_backoff: "8ms"
+      max_retry_backoff: "512ms"
+      dial_timeout: "5s"
+      read_timeout: "3s"
+      write_timeout: "3s"
+      pool_size: 10
+      min_idle_conns: 0
+      max_conn_age: ""
+      pool_timeout: "4s"
+      idle_timeout: "5m"
+      idle_check_frequency: "1m"
+    expiration_config:
+      inq_user: "15m"
+
+  my_other_rdb:
+    host: "localhost"
+    password: "passw0rd"
+    port: 6380
+    db: 0
+    connection:
+      default: true
+      max_retries: 3
+      min_retry_backoff: "8ms"
+      max_retry_backoff: "512ms"
+      dial_timeout: "5s"
+      read_timeout: "3s"
+      write_timeout: "3s"
+      pool_size: 10
+      min_idle_conns: 0
+      max_conn_age: ""
+      pool_timeout: "4s"
+      idle_timeout: "5m"
+      idle_check_frequency: "1m"
+    expiration_config:
+      something: "15m"

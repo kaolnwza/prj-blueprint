@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/kaolnwza/proj-blueprint/config"
-	"github.com/kaolnwza/proj-blueprint/libs/constants"
+	"github.com/kaolnwza/proj-blueprint/libs/consts"
 	"github.com/sirupsen/logrus"
 )
 
@@ -45,9 +45,9 @@ func (f *customFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 
 func (f *customFormatter) jsonFormat(entry *logrus.Entry) ([]byte, error) {
 	id := ""
-	if val, exist := entry.Data[constants.RequestIdKey]; exist {
+	if val, exist := entry.Data[consts.RequestIdKey]; exist {
 		id = val.(string)
-		delete(entry.Data, constants.RequestIdKey)
+		delete(entry.Data, consts.RequestIdKey)
 	}
 
 	err := map[string]interface{}{}
@@ -84,7 +84,7 @@ func (f *customFormatter) textFormat(entry *logrus.Entry) ([]byte, error) {
 	logOutput = strings.Replace(logOutput, "<lvl>", fmt.Sprintf("%v", strings.ToUpper(entry.Level.String())), 1)
 	logOutput = strings.Replace(logOutput, "<time>", entry.Time.Format(time.RFC3339), 1)
 
-	if val, exist := entry.Data[constants.RequestIdKey]; exist {
+	if val, exist := entry.Data[consts.RequestIdKey]; exist {
 		logOutput = strings.Replace(logOutput, "<requestID>", val.(string), 1)
 	} else {
 		logOutput = strings.Replace(logOutput, " [<requestID>]", "", 1)
@@ -99,7 +99,7 @@ func (f *customFormatter) textFormat(entry *logrus.Entry) ([]byte, error) {
 	}
 
 	for k, val := range entry.Data {
-		if k == constants.RequestIdKey {
+		if k == consts.RequestIdKey {
 			continue
 		}
 		if !strings.Contains(logOutput, "<"+k+">") {

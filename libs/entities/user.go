@@ -1,4 +1,4 @@
-package schemes
+package entities
 
 type Users struct {
 	UserId    string `gorm:"column:id; primary_key; type:varchar(36); default:gen_random_uuid()"`

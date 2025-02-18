@@ -1,7 +1,51 @@
+env: "local"
+
 db:
+  name: primary
+  driver: postgres
   host: localhost
   port: 5555
   user: root
   password: passw0rd
   database: ludwig_the_holy_blade
-  
+
+log:
+  level: "info"
+  json_format: false
+  show_body: true
+  show_body_on_error: true
+  pretty: true
+  include_health: false
+
+http:
+  max_idle_conns: 100
+  max_conns_per_host: 100
+  max_idle_conns_per_host: 100
+
+microservice:
+  timeout: "20s"
+  customer_service:
+    base_url: "http://localhost:8080/customers"
+    endpoints:
+      inq_by_cif:
+        http_method: "GET"
+        endpoint: "/:id"
+      list:
+        http_method: "GET"
+        endpoint: ""
+
+external_api:
+  user_centers:
+    timeout: "20s"
+    certs:
+      certs_require: true # true for continue to insecureSkip and certs parse
+      insecure_skip: true
+      certs: "secret"
+    base_url: "https://localhost:8081/user_centers"
+    endpoints:
+      inquiry:
+        http_method: "GET"
+        endpoint: ""
+      add:
+        http_method: "POST"
+        endpoint: ""

@@ -1,4 +1,4 @@
-package schemes
+package entities
 
 type Wallets struct {
 	WalletId string  `gorm:"column:wallet_id; primary_key; type:varchar(36); default:gen_random_uuid()"`

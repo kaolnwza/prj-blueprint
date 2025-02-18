@@ -1,7 +1,9 @@
 package main
 
-import "github.com/kaolnwza/proj-blueprint/pkg/database"
+import (
+	gormdb "github.com/kaolnwza/proj-blueprint/pkg/database/gorm"
+)
 
 func main() {
-	database.RunGormAutoMigrate()
+	gormdb.RunGormAutoMigrate()
 }

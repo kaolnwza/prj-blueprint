@@ -17,9 +17,9 @@ type BaseMicrosvcConfig[T any] struct {
 }
 
 type MicroserviceConfig struct {
+	httpPoolClient http.Client
 	Timeout        string                                `mapstructure:"timeout"`
 	CustomerConf   BaseMicrosvcConfig[CustomerEndpoints] `mapstructure:"customer_service"`
-	httpPoolClient http.Client
 }
 
 type (

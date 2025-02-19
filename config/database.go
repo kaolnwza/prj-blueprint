@@ -20,17 +20,17 @@ type (
 
 type (
 	RedisConfig struct {
+		Connection RedisConnectionConfig                  `mapstructure:"connection"`
 		MyRdb      BaseRedisConfig[MyRdbExpirationConfig] `mapstructure:"my_rdb"`
 		MyOtherRdb BaseRedisConfig[MyRdbExpirationConfig] `mapstructure:"my_other_rdb"`
 	}
 
 	BaseRedisConfig[T any] struct {
-		Host             string                `mapstructure:"host"`
-		Password         string                `mapstructure:"password"`
-		Port             string                `mapstructure:"port"`
-		Db               int                   `mapstructure:"db"`
-		Connection       RedisConnectionConfig `mapstructure:"connection"`
-		ExpirationConfig T                     `mapstructure:"expiration_config"`
+		Host             string `mapstructure:"host"`
+		Password         string `mapstructure:"password"`
+		Port             string `mapstructure:"port"`
+		Db               int    `mapstructure:"db"`
+		ExpirationConfig T      `mapstructure:"expiration_config"`
 	}
 
 	RedisConnectionConfig struct {
@@ -50,11 +50,15 @@ type (
 	}
 
 	MyRdbExpirationConfig struct {
-		InqUser int `mapstructure:"inq_user"`
+		InqUser string `mapstructure:"inq_user"`
+	}
+
+	MyOtherRdbExpirationConfig struct {
+		Something string `mapstructure:"something"`
 	}
 )
 
-func (m BaseDatabaseConfig) NewMysqlDsn() string {
+func (m BaseDatabaseConfig) GetMysqlDsn() string {
 	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
 		m.Username,
 		m.Password,

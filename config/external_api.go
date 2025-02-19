@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/kaolnwza/proj-blueprint/libs/safetyper"
@@ -21,6 +23,7 @@ type BaseExtApiConf[T any] struct {
 }
 
 type CertsConfig struct {
+	Type         string `mapstructure:"type"`
 	CertsRequire bool   `mapstructure:"certs_require"`
 	InsecureSkip bool   `mapstructure:"insecure_skip"`
 	Certs        string `mapstructure:"certs"`
@@ -45,8 +48,32 @@ func (m BaseExtApiConf[T]) GetHttpClient() http.Client {
 }
 
 const defaultTimeout = time.Second * 30
+const (
+	certsTypeSecret = "secret"
+	certsTypeFile   = "file"
+)
 
-func setupHttpClient(c CertsConfig, timeout string, httpConf HttpConfig) http.Client {
+func (c CertsConfig) toCertPool() (*x509.CertPool, error) {
+	certs := []byte(c.Certs)
+	if c.Type == certsTypeFile {
+		certBytes, err := os.ReadFile(c.Certs)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read cert file: %w", err)
+		}
+
+		certs = certBytes
+	}
+
+	certPool := x509.NewCertPool()
+	certByte := []byte(certs)
+	if !certPool.AppendCertsFromPEM(certByte) {
+		return nil, fmt.Errorf("failed to valid certs from AppendCertsFromPEM")
+	}
+
+	return certPool, nil
+}
+
+func setupHttpClient(fieldName string, c CertsConfig, timeout string, httpConf HttpConfig) http.Client {
 	exp, err := time.ParseDuration(timeout)
 	if err != nil {
 		log.Println("[Config] failed to parse timeout on external api http client -> parsed default timeout, err = %w", err)
@@ -64,9 +91,11 @@ func setupHttpClient(c CertsConfig, timeout string, httpConf HttpConfig) http.Cl
 				InsecureSkipVerify: true,
 			}
 		} else {
-			certPool := x509.NewCertPool()
-			certByte := []byte(c.Certs)
-			certPool.AppendCertsFromPEM(certByte)
+			certPool, err := c.toCertPool()
+			if err != nil {
+				log.Printf("[Config][%s] %v\n", fieldName, err)
+				return http.Client{Transport: t, Timeout: exp}
+			}
 
 			t.TLSClientConfig = &tls.Config{
 				RootCAs: certPool,
@@ -92,7 +121,9 @@ func (c *ExternalApiConfig) setupHttpPoolClients(httpConf HttpConfig) error {
 			}
 
 			timeoutValue := field.FieldByName("Timeout").String()
-			client := setupHttpClient(*certsPtr, timeoutValue, httpConf)
+			strSpl := strings.Split(field.Type().Name(), ".")
+			fieldName := strSpl[len(strSpl)-1]
+			client := setupHttpClient(fieldName, *certsPtr, timeoutValue, httpConf)
 
 			// field.FieldByName("httpPoolClient").Set(reflect.ValueOf(client))
 

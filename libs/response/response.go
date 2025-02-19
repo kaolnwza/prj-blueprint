@@ -23,7 +23,7 @@ func ErrorResponseBuilder(err error) errorTemplate {
 	return errorTemplate{
 		StatusCode: 500,
 		Code:       "999",
-		Message:    "Unknow",
+		Message:    "Unknown",
 		Err:        err,
 	}
 }

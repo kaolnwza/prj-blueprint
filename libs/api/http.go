@@ -10,7 +10,6 @@ import (
 	"net/url"
 
 	"github.com/kaolnwza/proj-blueprint/config"
-	"github.com/kaolnwza/proj-blueprint/libs/errors"
 	"github.com/kaolnwza/proj-blueprint/pkg/logger"
 )
 
@@ -107,7 +106,7 @@ func (c httpClient) NewRequest(ctx context.Context, cli http.Client, req *http.R
 	c.addResponseLog(payload, responseData)
 
 	log.WithFields(payload).Infof("Completed request %v %v successfully", req.Method, req.URL.String())
-	return errors.NewStackErr(err)
+	return err
 }
 
 func urlMessageFormat(httpMethod, url string) string {

@@ -17,14 +17,14 @@ type rdb struct {
 	cli *redis.Client
 }
 
-func New[T any](conf config.BaseRedisConfig[T]) database.Redis {
-	conn := redisConnect(conf)
+func New[T any](conf config.BaseRedisConfig[T], connConf config.RedisConnectionConfig) database.Redis {
+	conn := redisConnect(conf, connConf)
 	return rdb{
 		cli: conn,
 	}
 }
 
-func redisConnect[T any](conf config.BaseRedisConfig[T]) *redis.Client {
+func redisConnect[T any](conf config.BaseRedisConfig[T], connConf config.RedisConnectionConfig) *redis.Client {
 	logger := logger.GetById("init-redis")
 	options := &redis.Options{
 		Addr:     fmt.Sprintf("%s:%s", conf.Host, conf.Port),
@@ -32,22 +32,20 @@ func redisConnect[T any](conf config.BaseRedisConfig[T]) *redis.Client {
 		DB:       conf.Db,
 	}
 
-	if !conf.Connection.Default {
-		custom := conf.Connection
+	if !connConf.Default {
+		options.MaxRetries = connConf.MaxRetries
+		options.PoolSize = connConf.PoolSize
+		options.MinIdleConns = connConf.MinIdleConns
 
-		options.MaxRetries = custom.MaxRetries
-		options.PoolSize = custom.PoolSize
-		options.MinIdleConns = custom.MinIdleConns
-
-		options.MinRetryBackoff = parseDurationWithLog(custom.MinRetryBackoff, "MinRetryBackoff", logger)
-		options.MaxRetryBackoff = parseDurationWithLog(custom.MaxRetryBackoff, "MaxRetryBackoff", logger)
-		options.DialTimeout = parseDurationWithLog(custom.DialTimeout, "DialTimeout", logger)
-		options.ReadTimeout = parseDurationWithLog(custom.ReadTimeout, "ReadTimeout", logger)
-		options.WriteTimeout = parseDurationWithLog(custom.WriteTimeout, "WriteTimeout", logger)
-		options.MaxConnAge = parseDurationWithLog(custom.MaxConnAge, "MaxConnAge", logger)
-		options.PoolTimeout = parseDurationWithLog(custom.PoolTimeout, "PoolTimeout", logger)
-		options.IdleTimeout = parseDurationWithLog(custom.IdleTimeout, "IdleTimeout", logger)
-		options.IdleCheckFrequency = parseDurationWithLog(custom.IdleCheckFrequency, "IdleCheckFrequency", logger)
+		options.MinRetryBackoff = parseDurationWithLog(connConf.MinRetryBackoff, "MinRetryBackoff", logger)
+		options.MaxRetryBackoff = parseDurationWithLog(connConf.MaxRetryBackoff, "MaxRetryBackoff", logger)
+		options.DialTimeout = parseDurationWithLog(connConf.DialTimeout, "DialTimeout", logger)
+		options.ReadTimeout = parseDurationWithLog(connConf.ReadTimeout, "ReadTimeout", logger)
+		options.WriteTimeout = parseDurationWithLog(connConf.WriteTimeout, "WriteTimeout", logger)
+		options.MaxConnAge = parseDurationWithLog(connConf.MaxConnAge, "MaxConnAge", logger)
+		options.PoolTimeout = parseDurationWithLog(connConf.PoolTimeout, "PoolTimeout", logger)
+		options.IdleTimeout = parseDurationWithLog(connConf.IdleTimeout, "IdleTimeout", logger)
+		options.IdleCheckFrequency = parseDurationWithLog(connConf.IdleCheckFrequency, "IdleCheckFrequency", logger)
 
 		logger.Infof("Setup Redis with custom settings.")
 	}

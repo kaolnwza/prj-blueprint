@@ -6,11 +6,10 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/google/uuid v1.4.0
+	github.com/jackc/pgx/v5 v5.7.2
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.18.2
-	go.uber.org/zap v1.21.0
 	gorm.io/driver/mysql v1.5.7
-	gorm.io/driver/postgres v1.5.5
 	gorm.io/gorm v1.25.12
 )
 
@@ -32,7 +31,6 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
-	github.com/jackc/pgx/v5 v5.7.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect

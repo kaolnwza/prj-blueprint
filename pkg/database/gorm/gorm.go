@@ -62,7 +62,7 @@ func gormConnect(conf config.BaseDatabaseConfig) (*gorm.DB, error) {
 	switch conf.Driver {
 	case driverMysql:
 		return gorm.Open(mysql.New(mysql.Config{
-			DSN:                       conf.NewMysqlDsn(), // data source name
+			DSN:                       conf.GetMysqlDsn(), // data source name
 			DefaultStringSize:         256,                // default size for string fields
 			DisableDatetimePrecision:  true,               // disable datetime precision, which not supported before MySQL 5.6
 			DontSupportRenameIndex:    true,               // drop & create when rename index, rename index not supported before MySQL 5.7, MariaDB

@@ -25,7 +25,7 @@ func New(conf config.BaseDatabaseConfig) database.RdbmsDB[*pgx.Conn] {
 }
 
 func pgxConnect(conf config.BaseDatabaseConfig) (*pgx.Conn, error) {
-	return pgx.Connect(context.Background(), conf.NewMysqlDsn())
+	return pgx.Connect(context.Background(), conf.GetMysqlDsn())
 }
 
 func (d pgxDb) New(ctx context.Context) *pgx.Conn {

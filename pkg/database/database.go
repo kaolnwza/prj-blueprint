@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+// managing ACID on biz logic layer by contextใ
+type Transactor interface {
+	New(ctx context.Context) error
+}
+
 type RdbmsDB[T any] interface {
 	New(ctx context.Context) T // call driver, use in scenarios of using specific method of driver.
 	Query(ctx context.Context, query string, dest any, args ...interface{}) error

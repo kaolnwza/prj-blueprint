@@ -44,6 +44,7 @@ func (t *TestSuite) NewServer(status int, jsonStr string) *httptest.Server {
 	}))
 }
 
+// TODO: fix bug
 func (t *TestSuite) NewRepo(url string) ports.Repository {
 	extConf := config.ExternalApiConfig{
 		UserCenterConf: config.BaseExtApiConf[config.UserCenterEndpoints]{
@@ -61,18 +62,3 @@ func (t *TestSuite) NewRepo(url string) ports.Repository {
 	httpCli := api.New(config.LogConfig{}, config.HttpConfig{})
 	return New(config.HttpConfig{}, httpCli, extConf)
 }
-
-// 	// extConf := infrastructure.ExternalApiConfig{
-// 	// 	NextPartnerAuthPin: infrastructure.BaseExternalApiConfig[infrastructure.NextPartnerAuthPinListConf]{
-// 	// 		BaseUrl: url,
-// 	// 		Endpoints: infrastructure.NextPartnerAuthPinListConf{
-// 	// 			PinVerifyStatus: infrastructure.EndpointConf{
-// 	// 				// EndpointMethod: http.MethodPost,
-// 	// 				// EndpointUrl:    "/",
-// 	// 			},
-// 	// 		},
-// 	// 	},
-// 	// }
-
-// 	return New(api.New(api.NewHttp("", "5s", infrastructure.HttpConnectionPool{}), infrastructure.LogConfig{}, extConf))
-// }
